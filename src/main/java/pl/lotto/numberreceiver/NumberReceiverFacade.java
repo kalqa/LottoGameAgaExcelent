@@ -1,48 +1,44 @@
 package pl.lotto.numberreceiver;
 
-import java.util.*;
-
-import static pl.lotto.configuration.LottoConfig.*;
+import java.util.List;
+import java.util.UUID;
+import pl.lotto.drawdatepicker.DrawDatePickerDto;
+import pl.lotto.drawdatepicker.DrawDatePickerFacade;
+import pl.lotto.numberreceiver.dto.InputNumberResultDto;
 
 public class NumberReceiverFacade {
 
+    private final NumberValidator numberValidator;
+    private final DrawDatePickerFacade drawDatePickerFacade;
+
+    NumberReceiverFacade(NumberValidator numberValidator, DrawDatePickerFacade drawDatePickerFacade) {
+        this.numberValidator = numberValidator;
+        this.drawDatePickerFacade = drawDatePickerFacade;
+    }
+
     public InputNumberResultDto inputNumbers(List<Integer> numbersFromUser) {
-
-        return new InputNumberResultDto(UUID.fromString("5b960162-1e34-11ed-861d-0242ac120002"));
-    }
-
-    Scanner scanner;
-
-    NumberReceiverFacade(Scanner scanner) {
-        this.scanner = scanner;
-    }
-
-    public Set<Integer> getPlayerNumbers() {
-        Set<Integer> playerNumbers = new HashSet<>();
-        while (playerNumbers.size() < NUMBER_OF_LOTTO_NUMBERS) {
-            try {
-                String numberFromUser = scanner.nextLine();
-                int number = Integer.parseInt(numberFromUser);
-                if (isInRange(number)) {
-                    if (!playerNumbers.contains(number)) {
-                        playerNumbers.add(number);
-                    } else {
-                        System.out.println("You already entered this number. Please enter other number:");
-                    }
-                } else {
-                    System.out.println("Invalid input, please enter numbers between 1 and 99:");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("That's not a number! Please enter a valid input:");
-            }
+        if (numberValidator.isLessThanSixNumbers(numbersFromUser)) {
+            return new InputNumberResultDto(
+                    null,
+                    "you should give six numbers",
+                    null);
         }
 
-        System.out.println("Your numbers: " + playerNumbers);
-        return playerNumbers;
-    }
+        boolean areAllNumbersInRange = numberValidator.isAreAllNumbersInRange(numbersFromUser);
 
-    private boolean isInRange(int number) {
-        return number >= LOWEST_NUMBER_FROM_USER && number <= MAX_NUMBER_FROM_USER;
+        if (!areAllNumbersInRange) {
+            return new InputNumberResultDto(
+                    null,
+                    "at least one number is out of range 1 - 99",
+                    null);
+        }
+
+        DrawDatePickerDto drawDatePickerDto = drawDatePickerFacade.nextDrawDate();
+
+        return new InputNumberResultDto(
+                UUID.fromString("5b960162-1e34-11ed-861d-0242ac120002"),
+                "all went good",
+                drawDatePickerDto.drawDate());
     }
 
 }

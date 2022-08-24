@@ -1,8 +1,7 @@
-package pl.lotto.configuration;
+package pl.lotto.numberreceiver;
 
-public class LottoConfig {
+class LottoConfig {
     public static final int LOWEST_NUMBER_FROM_USER = 1;
     public static final int MAX_NUMBER_FROM_USER = 99;
-
     public static final int NUMBER_OF_LOTTO_NUMBERS = 6;
 }
