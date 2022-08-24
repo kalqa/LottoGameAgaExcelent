@@ -2,6 +2,7 @@ package pl.lotto.numberreceiver;
 
 import java.util.List;
 import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,6 +26,19 @@ class NumberReceiverFacadeTest {
         // given
         NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade();
         List<Integer> numbersFromUser = List.of(111, 111, 111, 111, 111, 111);
+
+        // when
+        InputNumberResultDto result = numberReceiverFacade.inputNumbers(numbersFromUser);
+
+        // then
+        assertThat(result.uniqueLotteryId()).isNull();
+    }
+
+    @Test
+    public void should_return_failed_message_when_not_numbers_are_provided() {
+        // given
+        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade();
+        List<Integer> numbersFromUser = List.of('a', 'b', 'c', 'd', 'e', 'f');
 
         // when
         InputNumberResultDto result = numberReceiverFacade.inputNumbers(numbersFromUser);
